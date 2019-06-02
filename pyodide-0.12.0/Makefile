@@ -62,7 +62,8 @@ all: build/pyodide.asm.js \
 
 build/python3.7.wasm: $(CPYTHONLIB) $(LZ4LIB)
 	[ -d build ] || mkdir build
-	$(CXX) -o $@ $(filter %.bc,$^) $(LDFLAGS) -s FORCE_FILESYSTEM=1
+	$(CXX) -o $@ $(filter %.bc,$^) $(LDFLAGS) -s FORCE_FILESYSTEM=1 \
+		-s EXPORTED_FUNCTIONS='["_main"]'
 
 
 build/pyodide.asm.js: src/main.bc src/jsimport.bc src/jsproxy.bc src/js2python.bc \
