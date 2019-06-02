@@ -2,6 +2,6 @@
 
 cd pyodide-0.12.0
 
-./run_docker
+./run_docker || exit $?
 
-cp pyodide-0.12.0/build/pyodide.asm.wasm ..
+cp build/python3.7.wasm .. || exit $?
