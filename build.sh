@@ -1,7 +1,15 @@
 #!/usr/bin/env sh
 
-cd pyodide-0.12.0
+PYODIDE_ROOT=pyodide-0.12.0
 
-./run_docker || exit $?
+(
+  cd ${PYODIDE_ROOT} && \
+  ./run_docker || exit $?
+) || exit $?
 
-cp build/python3.7.wasm .. || exit $?
+mkdir -p bin || exit $?
+cp ${PYODIDE_ROOT}/build/python3.7.wasm bin || exit $?
+chmod +x bin/python3.7.wasm || exit $?
+
+rm -rf lib || exit $?
+cp -R ${PYODIDE_ROOT}/cpython/installs/python-3.7.0/lib . || exit $?

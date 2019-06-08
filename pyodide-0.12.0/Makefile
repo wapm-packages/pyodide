@@ -42,6 +42,31 @@ LDFLAGS=\
   -s TEXTDECODER=0 \
   -s LZ4=1
 
+LDFLAGS_BIN=\
+	-O3 \
+	-s MODULARIZE=1 \
+	$(CPYTHONROOT)/installs/python-$(PYVERSION)/bin/python$(PYMINOR).bc \
+  $(LZ4LIB) \
+  -s "BINARYEN_METHOD='native-wasm'" \
+  -s TOTAL_MEMORY=1073741824 \
+  -s ALLOW_MEMORY_GROWTH=1 \
+	-s MAIN_MODULE=1 \
+	-s EMULATED_FUNCTION_POINTERS=1 \
+  -s EMULATE_FUNCTION_POINTER_CASTS=1 \
+  -s LINKABLE=1 \
+  -s EXPORT_ALL=1 \
+  -s WASM=1 \
+	-s SWAPPABLE_ASM_MODULE=1 \
+	-s USE_FREETYPE=1 \
+	-s USE_LIBPNG=1 \
+	-std=c++14 \
+  -L$(wildcard $(CPYTHONROOT)/build/sqlite*/.libs) -lsqlite3 \
+  -lstdc++ \
+  --memory-init-file 0 \
+  -s "BINARYEN_TRAP_MODE='clamp'" \
+  -s TEXTDECODER=0 \
+  -s LZ4=1
+
 SIX_ROOT=six/six-1.11.0/build/lib
 SIX_LIBS=$(SIX_ROOT)/six.py
 
@@ -61,8 +86,10 @@ all: build/pyodide.asm.js \
 
 
 build/python3.7.wasm: $(CPYTHONLIB) $(LZ4LIB)
+	mv $(CPYTHONROOT)/installs/python-$(PYVERSION)/bin/python$(PYMINOR) \
+		$(CPYTHONROOT)/installs/python-$(PYVERSION)/bin/python$(PYMINOR).bc
 	[ -d build ] || mkdir build
-	$(CXX) -o $@ $(filter %.bc,$^) $(LDFLAGS) -s FORCE_FILESYSTEM=1 \
+	$(CXX) -o $@ $(filter %.bc,$^) $(LDFLAGS_BIN) -s FORCE_FILESYSTEM=1 \
 		-s EXPORTED_FUNCTIONS='["_main"]'
 
 
