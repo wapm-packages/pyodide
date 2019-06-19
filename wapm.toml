@@ -1,0 +1,16 @@
+[package]
+name="python"
+version="0.0.0"
+description="it's Python 3.7!"
+pkg-fs-mount-point="."
+
+[[module]]
+name="python3.7"
+source="bin/python3.7.wasm"
+
+[[command]]
+name="python"
+module="python3.7"
+
+[fs]
+"python3.7"="lib/python3.7"
