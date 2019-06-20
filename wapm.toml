@@ -13,4 +13,4 @@ name="python"
 module="python3.7"
 
 [fs]
-"python3.7"="lib/python3.7"
+"lib"="lib"
