@@ -1,7 +1,7 @@
 [package]
 name="python"
 version="0.0.0"
-description="it's Python 3.7!"
+description="Python is an interpreted, high-level, general-purpose programming language"
 pkg-fs-mount-point="."
 
 [[module]]
