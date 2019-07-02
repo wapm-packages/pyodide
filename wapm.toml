@@ -1,16 +1,18 @@
 [package]
-name="python"
-version="0.0.0"
+name="mark2/python"
+version="0.0.4"
 description="it's Python 3.7!"
-pkg-fs-mount-point="."
+license-file="pyodide-0.12.0/LICENSE"
+disable-command-rename=true
 
 [[module]]
 name="python3.7"
 source="bin/python3.7.wasm"
+abi = "emscripten"
 
 [[command]]
 name="python"
 module="python3.7"
 
 [fs]
-"python3.7"="lib/python3.7"
+"lib"="lib"
