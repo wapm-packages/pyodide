@@ -1,9 +1,11 @@
 [package]
 name="python"
-version="0.0.1"
+version="0.0.2"
 description="Python is an interpreted, high-level, general-purpose programming language"
 license-file="pyodide-0.12.0/LICENSE"
 disable-command-rename=true
+readme = "README.md"
+repository = "https://github.com/wapm-packages/pyodide"
 
 [[module]]
 name="python3.7"
