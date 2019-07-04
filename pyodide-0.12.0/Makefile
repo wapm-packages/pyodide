@@ -4,6 +4,7 @@ include Makefile.envs
 FILEPACKAGER=$(PYODIDE_ROOT)/tools/file_packager.py
 
 CPYTHONROOT=cpython
+CPYTHONBIN=$(CPYTHONROOT)/installs/python-$(PYVERSION)/bin/python$(PYMINOR)
 CPYTHONLIB=$(CPYTHONROOT)/installs/python-$(PYVERSION)/lib/python$(PYMINOR)
 
 LZ4LIB=lz4/lz4-1.8.3/lib/liblz4.a
@@ -45,7 +46,7 @@ LDFLAGS=\
 LDFLAGS_BIN=\
 	-O3 \
 	-s MODULARIZE=1 \
-	$(CPYTHONROOT)/installs/python-$(PYVERSION)/bin/python$(PYMINOR).bc \
+	$(CPYTHONBIN).bc \
   $(LZ4LIB) \
   -s "BINARYEN_METHOD='native-wasm'" \
   -s TOTAL_MEMORY=1073741824 \
@@ -55,7 +56,6 @@ LDFLAGS_BIN=\
   -s EMULATE_FUNCTION_POINTER_CASTS=1 \
   -s LINKABLE=1 \
   -s EXPORT_ALL=1 \
-  -s WASM=1 \
 	-s SWAPPABLE_ASM_MODULE=1 \
 	-s USE_FREETYPE=1 \
 	-s USE_LIBPNG=1 \
@@ -85,11 +85,16 @@ all: build/pyodide.asm.js \
   build/webworker_dev.js
 
 
-build/python3.7.wasm: $(CPYTHONLIB) $(LZ4LIB)
-	mv $(CPYTHONROOT)/installs/python-$(PYVERSION)/bin/python$(PYMINOR) \
-		$(CPYTHONROOT)/installs/python-$(PYVERSION)/bin/python$(PYMINOR).bc
+build/python3.7.asm.js: $(CPYTHONBIN) $(CPYTHONLIB) $(LZ4LIB)
+	mv $(CPYTHONBIN) $(CPYTHONBIN).bc
 	[ -d build ] || mkdir build
-	$(CXX) -o $@ $(filter %.bc,$^) $(LDFLAGS_BIN) -s FORCE_FILESYSTEM=1 \
+	$(CXX) -o $@ $(filter %.bc,$^) $(LDFLAGS_BIN) -s WASM=0 -s FORCE_FILESYSTEM=1 \
+		-s EXPORTED_FUNCTIONS='["_main"]'
+
+build/python3.7.wasm: $(CPYTHONBIN) $(CPYTHONLIB) $(LZ4LIB)
+	mv $(CPYTHONBIN) $(CPYTHONBIN).bc
+	[ -d build ] || mkdir build
+	$(CXX) -o $@ $(filter %.bc,$^) $(LDFLAGS_BIN) -s WASM=1 -s FORCE_FILESYSTEM=1 \
 		-s EXPORTED_FUNCTIONS='["_main"]'
 
 
@@ -223,6 +228,9 @@ ccache/em++:
     ln -s emsdk/emsdk/emscripten/tag-$(EMSCRIPTEN_VERSION)/em++ $(PYODIDE_ROOT)/ccache/em++; \
   fi
 
+
+$(CPYTHONBIN): emsdk/emsdk/.complete ccache/emcc ccache/em++
+	make -C $(CPYTHONROOT)
 
 $(CPYTHONLIB): emsdk/emsdk/.complete ccache/emcc ccache/em++
 	make -C $(CPYTHONROOT)

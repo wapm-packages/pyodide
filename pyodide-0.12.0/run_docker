@@ -11,4 +11,6 @@ exec docker run \
     --user root -e NB_UID=$UID -e NB_GID=$GID \
     ${PYODIDE_DOCKER_IMAGE} \
     /usr/bin/make build/python3.7.wasm
+    # /usr/bin/make build/python3.7.asm.js
+    # /usr/bin/make clean
     # /bin/bash

@@ -12,6 +12,7 @@ BUILD=$(ROOT)/build/$(PYVERSION)/Python-$(PYVERSION)
 INSTALL=$(ROOT)/installs/python-$(PYVERSION)
 TARBALL=$(ROOT)/downloads/Python-$(PYVERSION).tgz
 URL=https://www.python.org/ftp/python/$(PYVERSION)/Python-$(PYVERSION).tgz
+BIN=python$(PYMINOR)
 LIB=libpython$(PYMINOR).a
 
 
@@ -25,8 +26,16 @@ SQLITEBUILD=$(ROOT)/build/sqlite-autoconf-3270200
 SQLITEURL=https://www.sqlite.org/2019/sqlite-autoconf-3270200.tar.gz
 
 
-all: $(INSTALL)/lib/$(LIB)
+all: $(INSTALL)/bin/$(BIN) $(INSTALL)/lib/$(LIB)
 
+
+$(INSTALL)/bin/$(BIN): $(BUILD)/python
+	( \
+		cd $(BUILD); \
+		touch $(BUILD)/python ; \
+		emmake make HOSTPYTHON=$(HOSTPYTHON) PYTHON_FOR_BUILD=$(HOSTPYTHON) \
+			CROSS_COMPILE=yes altbininstall \
+	)
 
 $(INSTALL)/lib/$(LIB): $(BUILD)/$(LIB)
 	( \
@@ -34,7 +43,7 @@ $(INSTALL)/lib/$(LIB): $(BUILD)/$(LIB)
 		sed -i -e 's/libinstall:.*/libinstall:/' Makefile; \
 		touch $(BUILD)/$(LIB) ; \
 		emmake make HOSTPYTHON=$(HOSTPYTHON) PYTHON_FOR_BUILD=$(HOSTPYTHON) \
-			CROSS_COMPILE=yes altbininstall libinstall $(LIB) && \
+			CROSS_COMPILE=yes libinstall $(LIB) && \
 		cp $(LIB) $(INSTALL)/lib/ && \
 		cp $(HOSTINSTALL)/lib/python$(PYMINOR)/`$(HOSTPYTHON) -c "import sysconfig; print(sysconfig._get_sysconfigdata_name())"`.py $(INSTALL)/lib/python$(PYMINOR)/_sysconfigdata__emscripten_.py; \
 		sed -i -e 's#'"$(PYODIDE_ROOT)"'##g' $(INSTALL)/lib/python$(PYMINOR)/_sysconfigdata__emscripten_.py; \
