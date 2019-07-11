@@ -2,13 +2,16 @@
 
 Python is an interpreted, high-level, general-purpose programming language. Created by Guido van Rossum and first released in 1991, Python's design philosophy emphasizes code readability with its notable use of significant whitespace.
 
-This repo is based on [Pyodide bringing Python to the browser via WebAssembly](https://github.com/iodide-project/pyodide).
-
 You can install python with:
 
 ```shell
 wapm install python
 ```
+
+**Original Source**: https://github.com/iodide-project/pyodide
+
+**Modification**: The original code (Pyodide) ported Python to the browser via WebAssembly. We made some adaptations to remove the JavaScript bindings and to expose the `main` function so it can be called as a CLI app.
+
 
 ## Running
 
